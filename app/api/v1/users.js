@@ -6,6 +6,17 @@ var User = require('mongoose').model('User');
 
 module.exports = users;
 
+users.param('id', function (req, res, next, id) {
+  User.findById(id, function (err, user) {
+    if(err) {
+      return next(err);
+    }
+
+    req.user = user;
+    next();
+  });
+});
+
 users.route('')
 .get(function (req, res) {
   User.find(function (err, result) {
@@ -21,7 +32,11 @@ users.route('')
 
 users.route('/:id')
 .get(function (req, res) {
-  User.findOne(req.params.id, function (err, result) {
+  res.json(req.user);
+})
+.post(function (req, res) {
+  req.user.set(req.body);
+  req.user.save(function (err, result) {
     res.json(err || result);
   });
 });
