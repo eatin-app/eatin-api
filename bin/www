@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 
+var nconf = require('nconf');
+
+nconf.env().file({ file: '../config.json' }).defaults({
+  PORT: 3003,
+  DB_URI: 'mongodb://localhost/eatin'
+});
+
 var app = require('../app');
 
-app.set('port', process.env.PORT || 3003);
+app.set('port', nconf.get('PORT'));
 
 var server = app.listen(app.get('port'), function() {
   console.log('Listening on port ' + server.address().port);

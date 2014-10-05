@@ -8,7 +8,7 @@ module.exports = function requireSiblings (filename) {
     return name !== path.basename(filename);
   }).map(function (name) {
     return {
-      path: '/' + path.basename(name, '.js'),
+      path: path.basename(name, '.js'),
       module: require(path.join(path.dirname(filename), name))
     };
   });
