@@ -4,9 +4,7 @@ var nconf = require('nconf');
 
 nconf.env().file({ file: 'config.json' }).defaults({
   PORT: 3003,
-  DB_URI: 'mongodb://localhost/eatin',
-  REDIS_URL: 'redis://localhost:6379',
-  COOKIE_SECRET: ''
+  DB_URI: 'mongodb://localhost/eatin'
 });
 
 var app = require('../app');
