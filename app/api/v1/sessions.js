@@ -13,13 +13,16 @@ sessions.route('')
 .post(passport.authenticate('local', { session: false }), function (req, res) {
   res.json(req.user);
 })
+.get(function (req, res) {
+  res.send(req.user);
+})
 .delete(function (req, res) {
-  async.waterfall([
-    User.findOne.bind(User, { token: req.header('Authorization') }),
-    function (user, next) {
-      user.deleteToken(next);
-    }
-  ], function (err) {
+  if(!req.user) {
+    //## Replace this with general req.isLoggedIn() or something
+    return res.json(401, {});
+  }
+
+  req.user.deleteToken(function (err) {
     res.json(err || { success: true });
   });
 });
