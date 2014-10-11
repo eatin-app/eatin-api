@@ -22,3 +22,10 @@ routes.use(function (req, res, next) {
 });
 
 module.exports = useSiblings(__filename, routes);
+
+// Error handler
+routes.use(function (err, req, res, next) {
+  res.status(err.code || 404).json({
+    error: err.message
+  });
+});
