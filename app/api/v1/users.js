@@ -2,9 +2,13 @@
 
 var express = require('express');
 var users = express.Router();
-var User = require('mongoose').model('User');
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+var Booking = mongoose.model('Booking');
+var auth = require('../../utils/auth');
 
 module.exports = users;
+
 
 users.param('id', function (req, res, next, id) {
   User.findById(id, function (err, user) {
@@ -38,5 +42,59 @@ users.route('/:id')
   req.user.set(req.body);
   req.user.save(function (err, result) {
     res.json(err || result);
+  });
+});
+
+users.route('/:id/bookouts')
+.all(auth.isLoggedIn)
+.get(function (req, res, next) {
+  Booking.find({
+    guest: req.user._id,
+    status: 'accepted'
+  })
+  .populate('host')
+  .populate('guest')
+  .exec(function (err, bookings) {
+    if(err) {
+      return next(err);
+    }
+
+    res.json(bookings);
+  });
+});
+
+users.route('/:id/bookins')
+.all(auth.isLoggedIn)
+.get(function (req, res, next) {
+  Booking.find({
+    host: req.user._id,
+    status: 'accepted'
+  })
+  .populate('host')
+  .populate('guest')
+  .exec(function (err, bookings) {
+    if(err) {
+      return next(err);
+    }
+
+    res.json(bookings);
+  });
+});
+
+users.route('/:id/requests')
+.all(auth.isLoggedIn)
+.get(function (req, res, next) {
+  Booking.find({
+    host: req.user._id,
+    status: 'pending'
+  })
+  .populate('host')
+  .populate('guest')
+  .exec(function (err, bookings) {
+    if(err) {
+      return next(err);
+    }
+
+    res.json(bookings);
   });
 });
