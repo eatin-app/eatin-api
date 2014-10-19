@@ -122,10 +122,14 @@ passport.use(new LocalStrategy({
       if(!isMatch) {
         return next();
       }
+      if(!user.verified) {
+        //## Need a way to tell user it's unverified
+        return next();
+      }
 
       user.generateToken(next);
     }
-  ], function (err, user, numAff) {
+  ], function (err, user) {
     if(err) {
       return done(err);
     }
