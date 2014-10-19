@@ -4,7 +4,10 @@ var nconf = require('nconf');
 
 nconf.env().file({ file: 'config.json' }).defaults({
   PORT: 3003,
-  DB_URI: 'mongodb://localhost/eatin'
+  DB_URI: 'mongodb://localhost/eatin',
+  MAIL_QUEUE_INTERVAL_MINUTES: 1,
+  MANDRILL_KEY: '',
+  EMAIL_FROM: ''
 });
 
 var app = require('../app');

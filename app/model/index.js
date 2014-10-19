@@ -11,6 +11,10 @@ mongoose.connection.on('connected', function () {
   console.log('Mongoose connected to %s', nconf.get('DB_URI'));
 });
 
+mongoose.connection.on('error', function (err) {
+  console.error(err);
+});
+
 models.forEach(function (model) {
   mongoose.model(model.path, model.module);
 });

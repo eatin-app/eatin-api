@@ -25,6 +25,8 @@ module.exports = useSiblings(__filename, routes);
 
 // Error handler
 routes.use(function (err, req, res, next) {
+  console.error(err);
+
   res.status(err.code || 500).json({
     error: err.message
   });

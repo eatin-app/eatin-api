@@ -23,7 +23,8 @@ var User = module.exports = mongoose.Schema({
   password: { type: String, required: true },
   token: { type: String },
   trustedBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-  isHost: { type: String, default: false, index: true }
+  isHost: { type: String, default: false, index: true },
+  verified: { type: Boolean, default: false }
 });
 
 
@@ -79,6 +80,21 @@ User.methods.deleteToken = function (callback) {
   }
 
   return this;
+};
+
+User.methods.create = function (callback) {
+  var self = this;
+  var unsettable = ['created', 'activity', 'token', 'trustedBy', 'verified'];
+
+  unsettable.forEach(function (property) {
+    if(property in self) {
+      delete self[property];
+    }
+  });
+
+  self.generateToken();
+
+  self.save(callback);
 };
 
 

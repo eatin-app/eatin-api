@@ -3,8 +3,10 @@
 var express = require('express');
 var users = express.Router();
 var mongoose = require('mongoose');
+var async = require('async');
 var User = mongoose.model('User');
 var Booking = mongoose.model('Booking');
+var emailService = require('../../services/email');
 var auth = require('../../utils/auth');
 
 module.exports = users;
@@ -27,10 +29,19 @@ users.route('')
     res.json(err || result);
   });
 })
-.post(function (req, res) {
-  new User(req.body).save(function (err, result) {
-    res.status(err && 400 || !result && 404 || 201);
-    res.send(err || result);
+.post(function (req, res, next) {
+  var newUser = new User(req.body);
+  //## Validation
+
+  async.series([
+    newUser.create.bind(newUser),
+    emailService.sendConfirmationEmail.bind(null, newUser)
+  ], function (err) {
+    if(err) {
+      return next(err);
+    }
+
+    res.status(201).send();
   });
 });
 
