@@ -19,7 +19,8 @@ var Email = module.exports = mongoose.Schema({
   to: { type: String, match: /^.+@[^.]+\.[^.]+$/, required: true },
   name: { type: String, required: true },
   subject: { type: String, required: true },
-  text: { type: String, required: true }
+  text: { type: String, required: true },
+  replyTo: { type: String, match: /^.+@[^.]+\.[^.]+$/ }
 });
 
 
@@ -45,18 +46,28 @@ setImmediate(function () {
         next(!outgoing && new Error('No outgoing emails found'), outgoing);
       },
       function (outgoing, next) {
+        var message;
+
         console.log('Processing email');
 
+        message = {
+          'from_email': nconf.get('EMAIL_FROM'),
+          to: [{
+            email: outgoing.to,
+            name: outgoing.name
+          }],
+          subject: outgoing.subject,
+          text: outgoing.text
+        };
+
+        if(outgoing.replyTo) {
+          message.headers = {
+            'Reply-To': outgoing.replyTo
+          };
+        }
+
         mandrill('/messages/send', {
-          message: {
-            'from_email': nconf.get('EMAIL_FROM'),
-            to: [{
-              email: outgoing.to,
-              name: outgoing.name
-            }],
-            subject: outgoing.subject,
-            text: outgoing.text,
-          }
+          message: message
         }, function (err) {
           next(err, outgoing);
         });

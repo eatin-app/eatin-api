@@ -1,9 +1,10 @@
 'use strict';
 
-var express = require('express');
-var bookings = express.Router();
-var Booking = require('mongoose').model('Booking');
+var async = require('async');
 var auth = require('../../utils/auth');
+var emailService = require('../../services/email');
+var bookings = require('express').Router();
+var Booking = require('mongoose').model('Booking');
 
 module.exports = bookings;
 
@@ -16,14 +17,25 @@ bookings.route('')
     res.json(err || result);
   });
 })
-.post(function (req, res) {
+.post(function (req, res, next) {
   var data = req.body;
+  var booking;
 
   data.guest = req.user._id;
+  booking = new Booking(data);
+  booking.messages = [data.message];
 
-  new Booking(data).save(function (err, result) {
-    res.status(err && 400 || !result && 404 || 201);
-    res.send(err || result);
+  async.waterfall([
+    booking.save.bind(booking),
+    function (result, __crap, next) {
+      emailService.sendBookingNotification(result, next);
+    }
+  ], function (err) {
+    if(err) {
+      return next(err);
+    }
+
+    res.send();
   });
 });
 

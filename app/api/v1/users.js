@@ -56,6 +56,10 @@ users.route('/:id')
   });
 });
 
+
+/* Per-user bookings
+============================================================================= */
+
 users.route('/:id/bookouts')
 .all(auth.isLoggedIn)
 .get(function (req, res, next) {
