@@ -12,7 +12,16 @@ var sessions = express.Router();
 module.exports = sessions;
 
 sessions.route('')
-.post(passport.authenticate('local', { session: false }), function (req, res) {
+.post(function (req, res, next) {
+  passport.authenticate('local', { session: false }, function (err, user, message) {
+    if(user) {
+      req.user = user;
+      return next();
+    }
+
+    next(err || auth.PermissionError(message.message));
+  })(req, res, next);
+}, function (req, res) {
   res.json(req.user);
 })
 .get(auth.isLoggedIn, function (req, res) {

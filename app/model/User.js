@@ -111,7 +111,7 @@ passport.use(new LocalStrategy({
     User.findOne.bind(User, { email: email }),
     function (_user, next) {
       if(!_user) {
-        return next();
+        return next({ message: 'Wrong username' });
       }
 
       user = _user;
@@ -120,21 +120,24 @@ passport.use(new LocalStrategy({
     },
     function (isMatch, next) {
       if(!isMatch) {
-        return next();
+        return next(null, null, { message: 'Wrong password' });
       }
       if(!user.verified) {
-        //## Need a way to tell user it's unverified
-        return next();
+        return next(null, null, { message: 'Email not verified' });
       }
 
       user.generateToken(next);
     }
-  ], function (err, user) {
+  ], function (err, user, message) {
     if(err) {
-      return done(err);
+      if(err instanceof Error) {
+        return done(err);
+      }
+
+      message = err;
     }
 
-    done(null, user || false);
+    done(null, user || false, message);
   });
 }));
 
