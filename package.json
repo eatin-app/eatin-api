@@ -20,6 +20,7 @@
     "handlebars": "^2.0.0",
     "method-override": "^2.2.0",
     "mongoose": "^3.8.17",
+    "morgan": "^1.4.1",
     "nconf": "^0.6.9",
     "node-mandrill": "^1.0.1",
     "passport": "^0.2.1",

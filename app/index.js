@@ -6,12 +6,14 @@ var nconf      = require('nconf');
 var passport   = require('passport');
 var methodOverride = require('method-override');
 var cors       = require('cors');
+var morgan     = require('morgan');
 
 var app        = express();
 var model      = require('./model');
 var api        = require('./api');
 
 
+app.use(morgan('combined'));
 app.use(cors());
 app.use(passport.initialize());
 app.use(methodOverride('Access-Control-Request-Method'));
