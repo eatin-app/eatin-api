@@ -24,9 +24,15 @@ users.param('id', function (req, res, next, id) {
 });
 
 users.route('')
-.get(function (req, res) {
-  User.find(function (err, result) {
-    res.json(err || result);
+.get(function (req, res, next) {
+  User.find({
+    isHost: true
+  }, function (err, result) {
+    if(err) {
+      return next(err);
+    }
+
+    res.json(result);
   });
 })
 .post(function (req, res, next) {
@@ -49,10 +55,14 @@ users.route('/:id')
 .get(function (req, res) {
   res.json(req.user);
 })
-.post(function (req, res) {
+.post(auth.isLoggedIn, function (req, res, next) {
   req.user.set(req.body);
   req.user.save(function (err, result) {
-    res.json(err || result);
+    if(err) {
+      return next(err);
+    }
+
+    res.json(result);
   });
 });
 
