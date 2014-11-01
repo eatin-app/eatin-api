@@ -7,7 +7,11 @@ nconf.env().file({ file: 'config.json' }).defaults({
   DB_URI: 'mongodb://localhost/eatin',
   MAIL_QUEUE_INTERVAL_MINUTES: 1,
   MANDRILL_KEY: '',
-  EMAIL_FROM: ''
+  EMAIL_FROM: '',
+  AWS_ACCESS_KEY_ID: '',
+  AWS_SECRET_ACCESS_KEY: '',
+  S3_IMAGE_BUCKET: '',
+  S3_IMAGE_BUCKET_URL: ''
 });
 
 var app = require('../app');

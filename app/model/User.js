@@ -7,6 +7,7 @@ var LocalStrategy = require('passport-local');
 var BearerStrategy = require('passport-http-bearer');
 var async = require('async');
 var uuid = require('uuid');
+var nconf = require('nconf');
 var SALT_WORK_FACTOR = 10;
 
 
@@ -24,9 +25,21 @@ var User = module.exports = mongoose.Schema({
   token: { type: String },
   trustedBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   isHost: { type: String, default: false, index: true },
-  verified: { type: Boolean, default: false }
+  verified: { type: Boolean, default: false },
+  profileImage: { type: mongoose.Schema.ObjectId, ref: 'Media' },
+  backgroundImage: { type: mongoose.Schema.ObjectId, ref: 'Media' }
 });
 
+/* Virtuals
+============================================================================= */
+
+User.virtual('profileImageUrl')
+.get(function () {
+  return nconf.get('IMAGE_ROOT_URL') + '/' + this.profileImage;
+});
+
+/* Hooks
+============================================================================= */
 
 User.pre('save', function(next) {
   var user = this;
@@ -46,6 +59,9 @@ User.pre('save', function(next) {
   });
 });
 
+/* Methods
+============================================================================= */
+
 User.methods.comparePassword = function(candidatePassword, callback) {
   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
     if(err) {
@@ -59,6 +75,7 @@ User.methods.comparePassword = function(candidatePassword, callback) {
 User.methods.toJSON = function () {
   var user = this.toObject();
   delete user.password;
+  user.profileImageUrl = this.profileImageUrl;
   return user;
 };
 

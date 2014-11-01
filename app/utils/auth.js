@@ -10,6 +10,18 @@ exports.isLoggedIn = function (req, res, next) {
   next(err);
 };
 
+exports.onlySelf = function (param, message) {
+  return function (req, res, next) {
+    var err;
+
+    if(!req.user._id.equals(req.params[param])) {
+      err = new exports.PermissionError(message || 'Users can only read their own endpoint');
+    }
+
+    next(err);
+  };
+};
+
 
 /* Errors
 ============================================================================= */
