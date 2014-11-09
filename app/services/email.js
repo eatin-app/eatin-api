@@ -13,7 +13,7 @@ exports.sendConfirmationEmail = function (user, callback) {
     text: templates.confirmation({
       name: user.name,
       //## Should not be hardcoded:
-      confirmationUrl: 'http://eatin.se/#/confirm?&token=' + user.token
+      confirmationUrl: 'http://eatin.se/#/confirm?token=' + user.token
     })
   });
 
