@@ -24,7 +24,7 @@ var User = module.exports = mongoose.Schema({
   password: { type: String, required: true },
   token: { type: String },
   trustedBy: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-  isHost: { type: String, default: false, index: true },
+  isHost: { type: Boolean, default: false, index: true },
   verified: { type: Boolean, default: false },
   profileImage: { type: mongoose.Schema.ObjectId, ref: 'Media' },
   backgroundImage: { type: mongoose.Schema.ObjectId, ref: 'Media' }
