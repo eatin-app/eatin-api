@@ -64,7 +64,7 @@ bookings.route('/:id')
 .post(function (req, res, next) {
   var booking = req.booking;
 
-  if(req.user._id !== booking.host._id) {
+  if(!req.user._id.equals(booking.host._id)) {
     return next(new auth.PermissionError('Only the host can accept bookings'));
   }
 
