@@ -61,6 +61,33 @@ users.route('')
   });
 });
 
+/* /random
+============================================================================= */
+
+users.route('/random')
+.get(function (req, res, next) {
+  async.waterfall([
+    User.count.bind(User, {
+      isHost: true
+    }),
+    function (count, done) {
+      User.find()
+      .where({
+        isHost: true
+      })
+      .skip(Math.floor(Math.random() * count))
+      .limit(1)
+      .exec(done);
+    }
+  ], function (err, host) {
+    if(err) {
+      return next(err);
+    }
+
+    res.send(host);
+  });
+});
+
 /* /:id
 ============================================================================= */
 
