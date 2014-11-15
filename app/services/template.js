@@ -14,3 +14,5 @@ templates.email.confirmation = Handlebars.compile(
   fs.readFileSync(path.join(root, 'email/confirmation') + extension).toString());
 templates.email.bookingNotification = Handlebars.compile(
   fs.readFileSync(path.join(root, 'email/bookingNotification') + extension).toString());
+templates.email.bookingAcceptedNotification = Handlebars.compile(
+  fs.readFileSync(path.join(root, 'email/bookingAcceptedNotification') + extension).toString());

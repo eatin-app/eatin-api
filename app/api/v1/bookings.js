@@ -77,12 +77,17 @@ bookings.route('/:id')
     booking.set('status', 'accepted');
   }
 
-  booking.save(function (err, result) {
+  async.series([
+    booking.save.bind(booking),
+    emailService.sendBookingAcceptedNotification.bind(null, req.client, booking)
+  ], function (err, result) {
     if(err) {
       return next(err);
     }
 
-    res.json(result);
+    res.json({
+      success: true
+    });
   });
 })
 .delete(function (req, res, next) {
