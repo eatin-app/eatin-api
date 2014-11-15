@@ -45,13 +45,13 @@ users.route('')
     res.json(result);
   });
 })
-.post(function (req, res, next) {
+.post(auth.isValidClient, function (req, res, next) {
   var newUser = new User(req.body);
   //## Validation
 
   async.series([
     newUser.create.bind(newUser),
-    emailService.sendConfirmationEmail.bind(null, newUser)
+    emailService.sendConfirmationEmail.bind(null, req.client, newUser)
   ], function (err) {
     if(err) {
       return next(err);

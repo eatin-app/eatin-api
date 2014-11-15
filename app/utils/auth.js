@@ -22,6 +22,16 @@ exports.onlySelf = function (param, message) {
   };
 };
 
+exports.isValidClient = function isValidClient (req, res, next) {
+  var err;
+
+  if(!req.client) {
+    err = new exports.PermissionError('Invalid client: ' + req.header('X-Client'));
+  }
+
+  next(err);
+};
+
 
 /* Errors
 ============================================================================= */

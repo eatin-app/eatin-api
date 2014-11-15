@@ -17,7 +17,7 @@ bookings.route('')
     res.json(err || result);
   });
 })
-.post(function (req, res, next) {
+.post(auth.isValidClient, function (req, res, next) {
   var data = req.body;
   var booking;
 
@@ -28,7 +28,7 @@ bookings.route('')
   async.waterfall([
     booking.save.bind(booking),
     function (result, __crap, next) {
-      emailService.sendBookingNotification(result, next);
+      emailService.sendBookingNotification(req.client, result, next);
     }
   ], function (err) {
     if(err) {
