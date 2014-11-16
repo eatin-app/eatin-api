@@ -46,9 +46,30 @@ exports.sendBookingAcceptedNotification = function (client, booking, callback) {
       to: booking.guest.email,
       name: booking.guest.name,
       subject: 'Din Eatin-förfrågan har accepterats',
-      replyTo: booking.guest.email,
+      replyTo: booking.host.email,
       text: templates.bookingAcceptedNotification({
         booking: booking,
+        bookingUrl: handlebars.compile(client.urls.booking)({
+          bookingId: booking._id
+        })
+      })
+    }).save(callback);
+  });
+};
+
+exports.sendBookingRejectedNotification = function (client, booking, sendTo, from, callback) {
+  booking.populate('host guest', 'name email', function (err, booking) {
+    var to = booking[sendTo];
+
+    new Email({
+      to: to.email,
+      name: to.name,
+      subject: 'Din bokning har avslagits',
+      replyTo: from.email,
+      text: templates.bookingRejectedNotification({
+        booking: booking,
+        to: to,
+        from: from,
         bookingUrl: handlebars.compile(client.urls.booking)({
           bookingId: booking._id
         })

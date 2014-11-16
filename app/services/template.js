@@ -9,10 +9,21 @@ var extension = '.hbs';
 
 var templates = module.exports = {};
 
-templates.email = {};
-templates.email.confirmation = Handlebars.compile(
-  fs.readFileSync(path.join(root, 'email/confirmation') + extension).toString());
-templates.email.bookingNotification = Handlebars.compile(
-  fs.readFileSync(path.join(root, 'email/bookingNotification') + extension).toString());
-templates.email.bookingAcceptedNotification = Handlebars.compile(
-  fs.readFileSync(path.join(root, 'email/bookingAcceptedNotification') + extension).toString());
+templates.email = {
+  confirmation: getAndCompile('email/confirmation'),
+  bookingNotification: getAndCompile('email/bookingNotification'),
+  bookingAcceptedNotification: getAndCompile('email/bookingAcceptedNotification'),
+  bookingRejectedNotification: getAndCompile('email/bookingRejectedNotification')
+};
+
+
+/* Helpers
+============================================================================= */
+
+function getTemplate (template) {
+  return fs.readFileSync(path.join(root, template) + extension).toString();
+}
+
+function getAndCompile (template) {
+  return Handlebars.compile(getTemplate(template));
+}

@@ -80,7 +80,7 @@ bookings.route('/:id')
   async.series([
     booking.save.bind(booking),
     emailService.sendBookingAcceptedNotification.bind(null, req.client, booking)
-  ], function (err, result) {
+  ], function (err) {
     if(err) {
       return next(err);
     }
@@ -92,21 +92,30 @@ bookings.route('/:id')
 })
 .delete(function (req, res, next) {
   var booking = req.booking;
+  var sendTo;
 
-  if(
-    !req.user._id.equals(booking.host._id) &&
-    !req.user._id.equals(booking.guest._id)
-  ) {
+  if(req.user._id.equals(booking.host._id)) {
+    sendTo = 'guest';
+  }
+  else if(req.user._id.equals(booking.guest._id)) {
+    sendTo = 'host';
+  }
+  else {
     return next(new auth.PermissionError('Only a host or guest can cancel bookings'));
   }
 
   booking.set('status', 'rejected');
 
-  booking.save(function (err, result) {
+  async.series([
+    booking.save.bind(booking),
+    emailService.sendBookingRejectedNotification.bind(null, req.client, booking, sendTo, req.user)
+  ], function (err) {
     if(err) {
       return next(err);
     }
 
-    res.json(result);
+    res.json({
+      success: true
+    });
   });
 });
