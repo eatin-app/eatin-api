@@ -13,7 +13,6 @@ exports.sendConfirmationEmail = function (client, user, callback) {
     subject: 'Confirm your email address',
     text: templates.confirmation({
       name: user.name,
-      //## Should not be hardcoded:
       confirmationUrl: handlebars.compile(client.urls.confirmation)({
         token: user.token
       })
@@ -76,4 +75,18 @@ exports.sendBookingRejectedNotification = function (client, booking, sendTo, fro
       })
     }).save(callback);
   });
+};
+
+exports.sendPasswordReset = function (client, user, callback) {
+  new Email({
+    to: user.email,
+    name: user.name,
+    subject: 'Återställ ditt lösenord',
+    text: templates.passwordReset({
+      user: user,
+      resetUrl: handlebars.compile(client.urls.passwordReset)({
+        token: user.token
+      })
+    })
+  }).save(callback);
 };

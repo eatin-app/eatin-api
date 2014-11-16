@@ -10,6 +10,7 @@ var Client = module.exports = mongoose.Schema({
   hostname: { type: String, required: true, index: { unique: true } },
   urls: {
     confirmation: { type: String },
-    booking: { type: String }
+    booking: { type: String },
+    passwordReset: { type: String }
   }
 });

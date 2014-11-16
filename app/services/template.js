@@ -9,12 +9,16 @@ var extension = '.hbs';
 
 var templates = module.exports = {};
 
-templates.email = {
-  confirmation: getAndCompile('email/confirmation'),
-  bookingNotification: getAndCompile('email/bookingNotification'),
-  bookingAcceptedNotification: getAndCompile('email/bookingAcceptedNotification'),
-  bookingRejectedNotification: getAndCompile('email/bookingRejectedNotification')
-};
+templates.email = [
+  'confirmation',
+  'bookingNotification',
+  'bookingAcceptedNotification',
+  'bookingRejectedNotification',
+  'passwordReset'
+].reduce(function (memo, current) {
+  memo[current] = getAndCompile('email/' + current);
+  return memo;
+}, {});
 
 
 /* Helpers
