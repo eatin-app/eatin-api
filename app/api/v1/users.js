@@ -13,6 +13,7 @@ var Booking = mongoose.model('Booking');
 var emailService = require('../../services/email');
 var imageService = require('../../services/image');
 var s3Service = require('../../services/s3');
+var geoService = require('../../services/geo');
 var auth = require('../../utils/auth');
 var sizes = Media.sizes;
 
@@ -50,6 +51,8 @@ users.route('')
   //## Validation
 
   async.series([
+    newUser.validate.bind(newUser),
+    geoService.locateUser.bind(null, newUser),
     newUser.create.bind(newUser),
     emailService.sendConfirmationEmail.bind(null, req.client, newUser)
   ], function (err) {
@@ -97,13 +100,20 @@ users.route('/:userId')
 })
 .post(auth.isLoggedIn, auth.onlySelf('userId'),
 function (req, res, next) {
-  req.user.set(req.body);
-  req.user.save(function (err, result) {
+  var user = req.user;
+
+  user.set(req.body);
+
+  async.series([
+    user.validate.bind(user),
+    geoService.locateUser.bind(null, user),
+    user.save.bind(user)
+  ], function (err, results) {
     if(err) {
       return next(err);
     }
 
-    res.json(result);
+    res.json(results[results.length - 1][1]);
   });
 });
 

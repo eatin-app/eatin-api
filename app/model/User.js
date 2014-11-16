@@ -19,6 +19,9 @@ var User = module.exports = mongoose.Schema({
   name: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true },
+  city: { type: String, required: true },
+  zip: { type: String, required: true },
+  geo: { type: [Number], index: '2dsphere' },
   bio: String,
 
   password: { type: String, required: true },
@@ -29,6 +32,7 @@ var User = module.exports = mongoose.Schema({
   profileImage: { type: mongoose.Schema.ObjectId, ref: 'Media' },
   backgroundImage: { type: mongoose.Schema.ObjectId, ref: 'Media' }
 });
+
 
 /* Virtuals
 ============================================================================= */
