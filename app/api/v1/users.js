@@ -174,6 +174,31 @@ users.route('/:userId/profileImage')
 /* Per-user bookings
 ============================================================================= */
 
+users.route('/:userId/bookings')
+.all(auth.isLoggedIn, auth.onlySelf('userId'))
+.get(function (req, res, next) {
+  Booking.find({
+    $or: [
+      {
+        guest: req.params.userId
+      },
+      {
+        host: req.params.userId
+      }
+    ],
+    status: 'accepted'
+  })
+  .populate('host')
+  .populate('guest')
+  .exec(function (err, bookings) {
+    if(err) {
+      return next(err);
+    }
+
+    res.json(bookings);
+  });
+});
+
 users.route('/:userId/bookouts')
 .all(auth.isLoggedIn, auth.onlySelf('userId'))
 .get(function (req, res, next) {
