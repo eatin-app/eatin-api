@@ -6,6 +6,9 @@
   "main": "./bin/www",
   "author": "Andreas Hultgren",
   "license": "MIT",
+  "engines": {
+    "node": "0.10.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node_modules/.bin/gulp",
