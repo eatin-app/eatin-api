@@ -69,15 +69,18 @@ users.route('')
 
 users.route('/random')
 .get(function (req, res, next) {
+  var where = {
+    isHost: true,
+    _id: {
+      $ne: req.user._id
+    }
+  };
+
   async.waterfall([
-    User.count.bind(User, {
-      isHost: true
-    }),
+    User.count.bind(User, where),
     function (count, done) {
       User.find()
-      .where({
-        isHost: true
-      })
+      .where(where)
       .skip(Math.floor(Math.random() * count))
       .limit(1)
       .exec(done);
