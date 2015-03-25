@@ -39,7 +39,7 @@ var User = module.exports = mongoose.Schema({
 
 User.virtual('profileImageUrl')
 .get(function () {
-  return nconf.get('IMAGE_ROOT_URL') + '/' + this.profileImage;
+  return nconf.get('FIRESIZE_TEMPLATE_URL') + '/' + nconf.get('IMAGE_ROOT_URL') + '/' + this.profileImage;
 });
 
 /* Hooks
